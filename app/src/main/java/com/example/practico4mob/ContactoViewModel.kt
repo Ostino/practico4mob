@@ -37,7 +37,7 @@ class ContactoViewModel : ViewModel() {
                 val response = apiService.deleteContact(contactId)
                 if (response.isSuccessful) {
                     Log.d("ContactoViewModel", "Contacto eliminado exitosamente")
-                    fetchContacts() // Refresca la lista de contactos
+                    fetchContacts()
                 } else {
                     Log.e("ContactoViewModel", "Error al eliminar contacto: ${response.errorBody()?.string()}")
                 }
@@ -56,8 +56,6 @@ class ContactoViewModel : ViewModel() {
                 if (newContact.isSuccessful) {
                     val newContactId = newContact.body()?.id ?: 0
                     Log.d("ContactoViewModel", "Nuevo ID del contacto: $newContactId")
-
-                    // Agregar teléfonos y emails usando el ID del nuevo contacto
                     agregarTelefonosYEmails(newContactId, contact.phones, contact.emails)
                     result.value = true
                 } else {
@@ -78,7 +76,7 @@ class ContactoViewModel : ViewModel() {
             phones.forEach { phone ->
                 val phoneRequest = Phone(id = 0, number = phone.label, persona_id = contactId, label = phone.number)
                 try {
-                    val response = apiService.addPhone(phoneRequest) // Enviar el objeto completo
+                    val response = apiService.addPhone(phoneRequest)
                     if (response.isSuccessful) {
                         Log.d("ContactoViewModel", "Teléfono añadido con éxito: ${phone.label}")
                     } else {
@@ -92,7 +90,7 @@ class ContactoViewModel : ViewModel() {
             emails.forEach { email ->
                 val emailRequest = Email(id = 0, email = email.label, persona_id = contactId, label = email.email)
                 try {
-                    val response = apiService.addEmail(emailRequest) // Enviar el objeto completo
+                    val response = apiService.addEmail(emailRequest)
                     if (response.isSuccessful) {
                         Log.d("ContactoViewModel", "Email añadido con éxito: ${email.label}")
                     } else {

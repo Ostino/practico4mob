@@ -17,8 +17,6 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() 
         contacts = newContacts
         notifyDataSetChanged()
     }
-
-    // Interfaz para manejar los clics
     interface OnItemClickListener {
         fun onItemClick(contact: Contact)
     }
@@ -38,12 +36,10 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() 
         holder.textViewName.text = "${contact.name} ${contact.last_name}"
         holder.textViewEmail.text = contact.emails.joinToString { it.email }
 
-        // Cargar la imagen de perfil desde la URL usando Glide
         Glide.with(holder.itemView.context)
             .load(contact.profile_picture)
             .into(holder.imageViewProfile)
 
-        // Configurar el clic en cada contacto
         holder.itemView.setOnClickListener {
             listener?.onItemClick(contact)
         }

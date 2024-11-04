@@ -25,10 +25,3 @@ data class Contact(
     val emails: List<Email> = listOf()
 )
 
-data class ResponseType(
-    val id: Int,
-    val success: Boolean,
-    val message: String,
-    val data: Contact? // Puedes incluir más campos según tu API
-)
-

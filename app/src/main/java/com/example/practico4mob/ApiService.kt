@@ -1,6 +1,5 @@
 package com.example.practico4mob
 
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,7 +16,7 @@ interface ApiService {
     @DELETE("personas/{id}")
     suspend fun deleteContact(@Path("id") contactId: Int): Response<Unit>
     @POST("phones")
-    suspend fun addPhone(@Body phone: Phone): Response<Phone> // Cambiado a recibir un objeto Phone
+    suspend fun addPhone(@Body phone: Phone): Response<Phone>
     @POST("emails")
     suspend fun addEmail(@Body email: Email): Response<Email>
 }
