@@ -21,8 +21,8 @@ data class Contact(
     val city: String,
     val state: String,
     val profile_picture: String,
-    val phones: List<Phone>,
-    val emails: List<Email>
+    val phones: List<Phone> = listOf(),
+    val emails: List<Email> = listOf()
 )
 
 data class ResponseType(

@@ -52,22 +52,16 @@ class ContactoViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                val response = apiService.addContact(contact)
-                if (response.isSuccessful) {
-                    response.body()?.let { newContact ->
-                        val newContactId = newContact.id
-                        Log.d("ContactoViewModel", "Nuevo ID del contacto: $newContactId")
+                val newContact = apiService.addContact(contact) // Añade el contacto
+                if (newContact.isSuccessful) {
+                    val newContactId = newContact.body()?.id ?: 0
+                    Log.d("ContactoViewModel", "Nuevo ID del contacto: $newContactId")
 
-                        // Agregar teléfonos y emails usando el ID del nuevo contacto
-                        agregarTelefonosYEmails(newContactId, contact.phones, contact.emails)
-                        result.value = true
-                        fetchContacts() // Refresca la lista si es necesario
-                    } ?: run {
-                        Log.e("ContactoViewModel", "Error: la respuesta al crear contacto es nula")
-                        result.value = false
-                    }
+                    // Agregar teléfonos y emails usando el ID del nuevo contacto
+                    agregarTelefonosYEmails(newContactId, contact.phones, contact.emails)
+                    result.value = true
                 } else {
-                    Log.e("ContactoViewModel", "Error al crear contacto: ${response.errorBody()?.string()}")
+                    Log.e("ContactoViewModel", "Error: la respuesta al crear contacto es nula o fallida")
                     result.value = false
                 }
             } catch (e: Exception) {
@@ -82,8 +76,7 @@ class ContactoViewModel : ViewModel() {
     private fun agregarTelefonosYEmails(contactId: Int, phones: List<Phone>, emails: List<Email>) {
         viewModelScope.launch {
             phones.forEach { phone ->
-                // Intercambia number y label
-                val phoneRequest = Phone(id = 0, number = phone.label, persona_id = contactId, label = phone.number) // label como number
+                val phoneRequest = Phone(id = 0, number = phone.label, persona_id = contactId, label = phone.number)
                 try {
                     val response = apiService.addPhone(phoneRequest) // Enviar el objeto completo
                     if (response.isSuccessful) {
@@ -97,8 +90,7 @@ class ContactoViewModel : ViewModel() {
             }
 
             emails.forEach { email ->
-                // Intercambia email y label
-                val emailRequest = Email(id = 0, email = email.label, persona_id = contactId, label = email.email) // label como email
+                val emailRequest = Email(id = 0, email = email.label, persona_id = contactId, label = email.email)
                 try {
                     val response = apiService.addEmail(emailRequest) // Enviar el objeto completo
                     if (response.isSuccessful) {
@@ -112,4 +104,5 @@ class ContactoViewModel : ViewModel() {
             }
         }
     }
+
 }
