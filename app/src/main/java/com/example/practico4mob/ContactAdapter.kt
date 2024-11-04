@@ -17,6 +17,7 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() 
         contacts = newContacts
         notifyDataSetChanged()
     }
+
     interface OnItemClickListener {
         fun onItemClick(contact: Contact)
     }

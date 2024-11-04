@@ -59,9 +59,7 @@ class MainActivity : AppCompatActivity() {
             }
             .show()
     }
-
     private fun confirmDelete(contact: Contact) {
-        // Muestra un diálogo de confirmación
         val alertDialog = AlertDialog.Builder(this)
             .setTitle("Eliminar contacto")
             .setMessage("¿Estás seguro de que deseas eliminar este contacto?")

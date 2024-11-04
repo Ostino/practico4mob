@@ -97,8 +97,6 @@ class FormularioContactoActivity : AppCompatActivity() {
             phones = listaTelefonos,
             emails = listaEmails
         )
-
-
         viewModel.agregarContacto(contact).observe(this) { success ->
             if (success) {
                 startActivity(Intent(this, MainActivity::class.java))

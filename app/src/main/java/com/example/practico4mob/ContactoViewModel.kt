@@ -52,7 +52,7 @@ class ContactoViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                val newContact = apiService.addContact(contact) // Añade el contacto
+                val newContact = apiService.addContact(contact)
                 if (newContact.isSuccessful) {
                     val newContactId = newContact.body()?.id ?: 0
                     Log.d("ContactoViewModel", "Nuevo ID del contacto: $newContactId")
@@ -67,7 +67,6 @@ class ContactoViewModel : ViewModel() {
                 result.value = false
             }
         }
-
         return result
     }
 
@@ -102,5 +101,4 @@ class ContactoViewModel : ViewModel() {
             }
         }
     }
-
 }
