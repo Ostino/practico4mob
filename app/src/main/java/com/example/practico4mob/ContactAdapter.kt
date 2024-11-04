@@ -11,12 +11,21 @@ import com.bumptech.glide.Glide
 class ContactAdapter : RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() {
 
     private var contacts = listOf<Contact>()
+    private var listener: OnItemClickListener? = null
 
     fun setContacts(newContacts: List<Contact>) {
         contacts = newContacts
-        notifyDataSetChanged() // Asegúrate de que esto esté llamando a notifyDataSetChanged
+        notifyDataSetChanged()
     }
 
+    // Interfaz para manejar los clics
+    interface OnItemClickListener {
+        fun onItemClick(contact: Contact)
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.listener = listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -31,9 +40,13 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() 
 
         // Cargar la imagen de perfil desde la URL usando Glide
         Glide.with(holder.itemView.context)
-            .load(contact.profile_picture) // Asegúrate de que profile_picture contenga la URL
-            // Imagen de placeholder (opcional)
+            .load(contact.profile_picture)
             .into(holder.imageViewProfile)
+
+        // Configurar el clic en cada contacto
+        holder.itemView.setOnClickListener {
+            listener?.onItemClick(contact)
+        }
     }
 
     override fun getItemCount() = contacts.size

@@ -4,10 +4,13 @@ import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.practico4mob.databinding.ActivityFormularioContactoBinding
+
 class FormularioContactoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFormularioContactoBinding
     private val viewModel: ContactoViewModel by viewModels()
@@ -17,20 +20,48 @@ class FormularioContactoActivity : AppCompatActivity() {
         binding = ActivityFormularioContactoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Configuración del Spinner para etiquetas de teléfono
-        val etiquetasTelefono = listOf("Casa", "Trabajo", "Celular", "Personalizada")
-        val adapterTelefono = ArrayAdapter(this, R.layout.simple_spinner_item, etiquetasTelefono)
-        adapterTelefono.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-        binding.spinnerEtiquetaTelefono.adapter = adapterTelefono
+        Log.d("FormularioContactoActivity", "Activity creada")
 
-        // Configuración del Spinner para etiquetas de email (suponiendo que también tienes este Spinner)
-        val etiquetasEmail = listOf("Persona", "Trabajo", "Universidad", "Personalizada")
-        val adapterEmail = ArrayAdapter(this, R.layout.simple_spinner_item, etiquetasEmail)
-        adapterEmail.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-        binding.spinnerEtiquetaEmail.adapter = adapterEmail
+        setupSpinners()
 
         binding.btnGuardar.setOnClickListener {
             guardarContacto()
+        }
+    }
+
+    private fun setupSpinners() {
+        val etiquetasTelefono = listOf("Casa", "Trabajo", "Celular", "Personalizada")
+        val etiquetasEmail = listOf("Persona", "Trabajo", "Universidad", "Personalizada")
+
+        val adapterTelefono = ArrayAdapter(this, android.R.layout.simple_spinner_item, etiquetasTelefono)
+        val adapterEmail = ArrayAdapter(this, android.R.layout.simple_spinner_item, etiquetasEmail)
+
+        adapterTelefono.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapterEmail.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        binding.spinnerEtiquetaTelefono.adapter = adapterTelefono
+        binding.spinnerEtiquetaEmail.adapter = adapterEmail
+
+        binding.spinnerEtiquetaTelefono.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                Log.d("FormularioContactoActivity", "Etiqueta teléfono seleccionada: ${etiquetasTelefono[position]}")
+                if (position != 0) {
+                    binding.etTelefono.setText("") // Limpia el campo de teléfono
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        binding.spinnerEtiquetaEmail.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                Log.d("FormularioContactoActivity", "Etiqueta email seleccionada: ${etiquetasEmail[position]}")
+                if (position != 0) {
+                    binding.etEmail.setText("") // Limpia el campo de email
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
 
@@ -42,56 +73,57 @@ class FormularioContactoActivity : AppCompatActivity() {
         val ciudad = binding.etCiudad.text.toString()
         val estado = binding.etEstado.text.toString()
 
+        Log.d("FormularioContactoActivity", "Datos del contacto: Nombre: $nombre, Apellido: $apellido, Compañía: $compania, Dirección: $direccion, Ciudad: $ciudad, Estado: $estado")
+
         val listaTelefonos = mutableListOf<Phone>()
         val listaEmails = mutableListOf<Email>()
 
-        // Obtener los datos del teléfono
-        val telefono = binding.etTelefono.text.toString() // Asegúrate de que este EditText esté en tu layout
-        val etiquetaTelefono = binding.spinnerEtiquetaTelefono.selectedItem.toString() // Obtener la etiqueta seleccionada
-        Log.d("FormularioContacto", "Teléfono: $telefono, Etiqueta Teléfono: $etiquetaTelefono") // Log de teléfono
+        val telefono = binding.etTelefono.text.toString()
+        val etiquetaTelefono = binding.spinnerEtiquetaTelefono.selectedItem.toString()
+        val email = binding.etEmail.text.toString()
+        val etiquetaEmail = binding.spinnerEtiquetaEmail.selectedItem.toString()
+
+        // Validación y adición de teléfonos
         if (telefono.isNotBlank()) {
-            listaTelefonos.add(Phone(0, etiquetaTelefono, telefono)) // Agregar a la lista solo si no está vacío
-            Log.d("FormularioContacto", "Lista de Teléfonos: $listaTelefonos") // Log de lista de teléfonos
+            listaTelefonos.add(Phone(0, 0, telefono, etiquetaTelefono)) // Agrega ID temporal
+            Log.d("FormularioContactoActivity", "Teléfono agregado: $telefono con etiqueta $etiquetaTelefono")
         } else {
-            Log.w("FormularioContacto", "Teléfono está vacío, no se agregará a la lista de teléfonos")
+            Log.w("FormularioContactoActivity", "Teléfono está vacío, no se agregará a la lista de teléfonos")
         }
 
-        // Obtener los datos del email
-        val email = binding.etEmail.text.toString() // Asegúrate de que este EditText esté en tu layout
-        val etiquetaEmail = binding.spinnerEtiquetaEmail.selectedItem.toString() // Obtener la etiqueta seleccionada
-        Log.d("FormularioContacto", "Email: $email, Etiqueta Email: $etiquetaEmail") // Log de email
+        // Validación y adición de emails
         if (email.isNotBlank()) {
-            listaEmails.add(Email(0, etiquetaEmail, email)) // Agregar a la lista solo si no está vacío
-            Log.d("FormularioContacto", "Lista de Emails: $listaEmails") // Log de lista de emails
+            listaEmails.add(Email(0, 0, email, etiquetaEmail)) // Agrega ID temporal
+            Log.d("FormularioContactoActivity", "Email agregado: $email con etiqueta $etiquetaEmail")
         } else {
-            Log.w("FormularioContacto", "Email está vacío, no se agregará a la lista de emails")
+            Log.w("FormularioContactoActivity", "Email está vacío, no se agregará a la lista de emails")
         }
 
-        // Si no tienes la URL de la imagen en ese momento, podrías dejarla como una cadena vacía o como nula
-        val urlImagen = "" // O establece esto según la lógica de tu aplicación
+        val urlImagen = "" // Asigna la URL de la imagen según tu lógica
 
-        binding.btnGuardar.setOnClickListener {
-            val contact = Contact(
-                id = 0,
-                name = nombre,
-                last_name = apellido,
-                company = compania,
-                address = direccion,
-                city = ciudad,
-                state = estado,
-                profile_picture = urlImagen,
-                phones = listaTelefonos,
-                emails = listaEmails
-            )
+        val contact = Contact(
+            id = 0, // Asigna un ID temporal
+            name = nombre,
+            last_name = apellido,
+            company = compania,
+            address = direccion,
+            city = ciudad,
+            state = estado,
+            profile_picture = urlImagen,
+            phones = listaTelefonos,
+            emails = listaEmails
+        )
 
-            viewModel.agregarContacto(contact).observe(this) { success ->
-                if (success) {
-                    // Volver a la lista de contactos
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                } else {
-                    Log.e("FormularioContacto", "Error al guardar contacto")
-                }
+        Log.d("FormularioContactoActivity", "Contacto a guardar: $contact")
+
+        // Almacena el contacto en el ViewModel
+        viewModel.agregarContacto(contact).observe(this) { success ->
+            if (success) {
+                Log.d("FormularioContactoActivity", "Contacto guardado exitosamente, redirigiendo a MainActivity")
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            } else {
+                Log.e("FormularioContactoActivity", "Error al guardar contacto")
             }
         }
     }
